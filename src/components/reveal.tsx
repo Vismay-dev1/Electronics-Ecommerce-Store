@@ -20,7 +20,7 @@ export function Reveal({
     const node = ref.current;
     if (!node) return;
     if (typeof IntersectionObserver === "undefined") {
-      setVisible(true);
+      queueMicrotask(() => setVisible(true));
       return;
     }
     const observer = new IntersectionObserver(

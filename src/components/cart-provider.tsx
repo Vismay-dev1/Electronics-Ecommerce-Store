@@ -79,8 +79,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    setLines(readStoredCart());
-    setHydrated(true);
+    queueMicrotask(() => {
+      setLines(readStoredCart());
+      setHydrated(true);
+    });
   }, []);
 
   useEffect(() => {
