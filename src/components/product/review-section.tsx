@@ -90,7 +90,7 @@ export function ReviewSection({
     >
       <div className="grid gap-10 lg:grid-cols-[300px_1fr] lg:gap-16">
         <div>
-          <p className="eyebrow text-brand-500">Verified owners</p>
+          <p className="eyebrow text-brand-500">Product reviews</p>
           <h2 className="mt-3 font-display text-3xl text-ink-900 md:text-4xl">
             Reviews
           </h2>
@@ -101,7 +101,7 @@ export function ReviewSection({
             <div className="pb-1.5">
               <StarRating value={rating} size={16} />
               <p className="mt-1 text-xs text-ink-500">
-                {reviews.length} verified review{reviews.length === 1 ? "" : "s"}
+                {reviews.length} review{reviews.length === 1 ? "" : "s"}
               </p>
             </div>
           </div>
@@ -254,7 +254,7 @@ export function ReviewSection({
                         )}
                       </p>
                       <p className="text-xs text-ink-400">
-                        {review.location || "Verified buyer"} ·{" "}
+                        {review.location || "Customer"} ·{" "}
                         {relativeDate(review.createdAt)}
                       </p>
                     </div>

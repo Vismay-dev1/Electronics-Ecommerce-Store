@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useCart } from "./cart-provider";
@@ -28,6 +29,23 @@ export function CartDrawer() {
     lastAddedSlug,
   } = useCart();
 
+  const dialog = useRef<HTMLElement>(null);
+  useEffect(() => {
+    if (!isOpen) return;
+    const previous = document.activeElement as HTMLElement | null;
+    const el = dialog.current;
+    const controls = () => Array.from(el?.querySelectorAll<HTMLElement>('a[href], button:not([disabled]), input, select, textarea, [tabindex="0"]') ?? []);
+    controls()[0]?.focus();
+    const trap = (event: KeyboardEvent) => {
+      if (event.key !== 'Tab') return;
+      const elements = controls(), first = elements[0], last = elements[elements.length - 1];
+      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
+      if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
+    };
+    el?.addEventListener('keydown', trap);
+    return () => { el?.removeEventListener('keydown', trap); previous?.focus(); };
+  }, [isOpen]);
+
   const remaining = FREE_SHIPPING_THRESHOLD - subtotalCents;
   const progress = Math.min(
     100,
@@ -40,6 +58,7 @@ export function CartDrawer() {
         isOpen ? "pointer-events-auto" : "pointer-events-none"
       }`}
       aria-hidden={!isOpen}
+      inert={!isOpen}
     >
       <div
         className={`absolute inset-0 bg-ink-950/55 backdrop-blur-[3px] transition-opacity duration-400 ${
@@ -48,7 +67,9 @@ export function CartDrawer() {
         onClick={closeCart}
       />
       <aside
+        ref={dialog}
         role="dialog"
+        aria-modal="true"
         aria-label="Shopping bag"
         className={`absolute inset-y-0 right-0 flex w-full max-w-md flex-col bg-cream-50 shadow-lift transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
           isOpen ? "translate-x-0" : "translate-x-full"

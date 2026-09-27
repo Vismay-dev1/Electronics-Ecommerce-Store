@@ -1,4 +1,26 @@
-import { and, asc, desc, eq, gte, ilike, inArray, lte, or, sql } from "drizzle-orm";
+import { productImage, categoryImage } from "./catalog-images";
+import { seedProducts } from "@/db/seed-data";
+const seedFeatured = (id: number) => seedProducts[id - 1]?.featured;
+import {
+  demoMode,
+  demoProducts,
+  demoCollections,
+  demoShop,
+  demoFacets,
+  demoReviews,
+} from "./demo-catalog";
+import {
+  and,
+  asc,
+  desc,
+  eq,
+  gte,
+  ilike,
+  inArray,
+  lte,
+  or,
+  sql,
+} from "drizzle-orm";
 import { db } from "@/db";
 import { ensureSeeded } from "@/db/seed";
 import {
@@ -9,12 +31,7 @@ import {
   products,
   reviews,
 } from "@/db/schema";
-import type {
-  Collection,
-  ProductCard,
-  ProductDetail,
-  Review,
-} from "./types";
+import type { Collection, ProductCard, ProductDetail, Review } from "./types";
 
 export type ShopFilters = {
   categories: string[];
@@ -51,7 +68,7 @@ function toCard(
     colors: row.colors ?? [],
     isNewArrival: row.isNewArrival,
     bestseller: row.bestseller,
-    imageUrl: image?.url ?? "",
+    imageUrl: productImage(row.name),
     imageAlt: image?.alt ?? row.name,
   };
 }
@@ -59,7 +76,10 @@ function toCard(
 async function primaryImages(
   ids: number[],
 ): Promise<Map<number, { url: string; alt: string }>> {
-  const positions = new Map<number, { url: string; alt: string; position: number }>();
+  const positions = new Map<
+    number,
+    { url: string; alt: string; position: number }
+  >();
   if (ids.length === 0) return new Map();
 
   const rows = await db
@@ -108,6 +128,7 @@ function orderFor(sort: string) {
 }
 
 export async function getShopProducts(filters: ShopFilters) {
+  if (demoMode) return demoShop(filters);
   await ensureSeeded();
 
   const conditions = [];
@@ -171,6 +192,7 @@ export async function getShopProducts(filters: ShopFilters) {
 }
 
 export async function getFacets() {
+  if (demoMode) return demoFacets();
   await ensureSeeded();
   const rows = await db
     .select({
@@ -201,7 +223,10 @@ export async function getFacets() {
   };
 }
 
-export async function getProductBySlug(slug: string): Promise<ProductDetail | null> {
+export async function getProductBySlug(
+  slug: string,
+): Promise<ProductDetail | null> {
+  if (demoMode) return demoProducts.find((p) => p.slug === slug) ?? null;
   await ensureSeeded();
   const [row] = await db
     .select()
@@ -221,11 +246,12 @@ export async function getProductBySlug(slug: string): Promise<ProductDetail | nu
     description: row.description,
     highlights: row.highlights ?? [],
     specs: row.specs ?? [],
-    images: imageRows,
+    images: [{ url: productImage(row.name), alt: row.name }],
   };
 }
 
 export async function getReviews(productId: number): Promise<Review[]> {
+  if (demoMode) return demoReviews(productId);
   const rows = await db
     .select()
     .from(reviews)
@@ -250,11 +276,23 @@ export async function getRelatedProducts(
   product: Pick<ProductDetail, "id" | "category">,
   limit = 4,
 ): Promise<ProductCard[]> {
+  if (demoMode)
+    return demoProducts
+      .filter((p) => p.id !== product.id)
+      .sort(
+        (a, b) =>
+          Number(b.category === product.category) -
+          Number(a.category === product.category),
+      )
+      .slice(0, limit);
   const rows = await db
     .select()
     .from(products)
     .where(
-      and(eq(products.category, product.category), sql`${products.id} <> ${product.id}`),
+      and(
+        eq(products.category, product.category),
+        sql`${products.id} <> ${product.id}`,
+      ),
     )
     .orderBy(desc(products.rating))
     .limit(limit);
@@ -284,6 +322,7 @@ export async function getRelatedProducts(
 }
 
 export async function getCollections(): Promise<Collection[]> {
+  if (demoMode) return demoCollections;
   await ensureSeeded();
   const rows = await db
     .select()
@@ -302,7 +341,7 @@ export async function getCollections(): Promise<Collection[]> {
     tagline: row.tagline,
     description: row.description,
     category: row.category,
-    imageUrl: row.imageUrl,
+    imageUrl: categoryImage[row.category] ?? row.imageUrl,
     accent: row.accent,
     productCount: countMap.get(row.category) ?? 0,
   }));
@@ -324,6 +363,8 @@ async function cardsBy(
 }
 
 export async function getFeaturedProducts(limit = 8) {
+  if (demoMode)
+    return demoProducts.filter((p) => seedFeatured(p.id)).slice(0, limit);
   await ensureSeeded();
   return cardsBy(
     [desc(products.rating), desc(products.reviewCount)],
@@ -333,6 +374,10 @@ export async function getFeaturedProducts(limit = 8) {
 }
 
 export async function getBestsellers(limit = 8) {
+  if (demoMode)
+    return [...demoProducts]
+      .sort((a, b) => Number(b.bestseller) - Number(a.bestseller))
+      .slice(0, limit);
   await ensureSeeded();
   return cardsBy(
     [desc(products.bestseller), desc(products.reviewCount)],
@@ -342,22 +387,26 @@ export async function getBestsellers(limit = 8) {
 }
 
 export async function getNewArrivals(limit = 4) {
+  if (demoMode)
+    return demoProducts.filter((p) => p.isNewArrival).slice(0, limit);
   await ensureSeeded();
-  return cardsBy(
-    [desc(products.id)],
-    limit,
-    eq(products.isNewArrival, true),
-  );
+  return cardsBy([desc(products.id)], limit, eq(products.isNewArrival, true));
 }
 
 export async function getDeals(limit = 4) {
+  if (demoMode)
+    return demoProducts
+      .filter((p) => (p.compareAtCents ?? 0) > p.priceCents)
+      .slice(0, limit);
   await ensureSeeded();
   const rows = await db
     .select()
     .from(products)
     .where(sql`${products.compareAtCents} is not null`)
     .orderBy(
-      desc(sql`(${products.compareAtCents} - ${products.priceCents})::float / ${products.compareAtCents}`),
+      desc(
+        sql`(${products.compareAtCents} - ${products.priceCents})::float / ${products.compareAtCents}`,
+      ),
     )
     .limit(limit);
   const imageMap = await primaryImages(rows.map((row) => row.id));
@@ -365,6 +414,12 @@ export async function getDeals(limit = 4) {
 }
 
 export async function getStoreStats() {
+  if (demoMode)
+    return {
+      productCount: demoProducts.length,
+      reviewCount: demoProducts.reduce((n, p) => n + p.reviewCount, 0),
+      avgRating: demoProducts.length ? Number((demoProducts.reduce((sum, p) => sum + p.rating, 0) / demoProducts.length).toFixed(1)) : 0,
+    };
   await ensureSeeded();
   const [row] = await db
     .select({
@@ -381,6 +436,7 @@ export async function getStoreStats() {
 }
 
 export async function getOrderByNumber(orderNumber: string) {
+  if (demoMode) return null;
   const [order] = await db
     .select()
     .from(orders)
@@ -395,6 +451,7 @@ export async function getOrderByNumber(orderNumber: string) {
 }
 
 export async function getAllProductSlugs() {
+  if (demoMode) return demoProducts.map((p) => ({ slug: p.slug }));
   await ensureSeeded();
   return db.select({ slug: products.slug }).from(products);
 }
@@ -409,7 +466,19 @@ export type SpotlightReview = {
   productSlug: string;
 };
 
-export async function getSpotlightReviews(limit = 3): Promise<SpotlightReview[]> {
+export async function getSpotlightReviews(
+  limit = 3,
+): Promise<SpotlightReview[]> {
+  if (demoMode)
+    return demoProducts
+      .flatMap((p) =>
+        demoReviews(p.id).map((r) => ({
+          ...r,
+          productName: p.name,
+          productSlug: p.slug,
+        })),
+      )
+      .slice(0, limit);
   await ensureSeeded();
   const rows = await db
     .select({

@@ -39,6 +39,7 @@ export function ProductCard({
       : 0;
 
   const handleAdd = () => {
+    if (product.stock < 1) return;
     addItem({
       productId: product.id,
       slug: product.slug,
@@ -92,6 +93,7 @@ export function ProductCard({
         <button
           type="button"
           onClick={handleAdd}
+          disabled={product.stock < 1}
           className="absolute bottom-3 right-3 flex translate-y-3 items-center gap-1.5 rounded-full bg-ink-900 px-3.5 py-2 text-xs font-semibold text-cream-50 opacity-0 shadow-[0_10px_30px_-12px_rgba(7,8,12,0.7)] transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] hover:bg-brand-400 hover:text-ink-900 focus-visible:translate-y-0 focus-visible:opacity-100 group-hover:translate-y-0 group-hover:opacity-100 max-md:translate-y-0 max-md:opacity-100"
           aria-label={`Add ${product.name} to bag`}
         >

@@ -8,11 +8,11 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: {
-    default: "Loyal Electronics — Tech for Youth & Families",
+    default: "Loyal — Good tech. Great everyday.",
     template: "%s · Loyal Electronics",
   },
   description:
-    "Premium audio, laptops, wearables and home cinema built for teenagers and families. Free 2-day shipping over $75 and a 3-year Loyal Care warranty.",
+    "Premium audio, laptops, wearables and home cinema built for teenagers and families. Free standard shipping on orders $75 and up.",
   keywords: [
     "electronics store",
     "headphones",
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     "home cinema",
   ],
   openGraph: {
-    title: "Loyal Electronics — Tech for Youth & Families",
+    title: "Loyal — Good tech. Great everyday.",
     description:
       "Premium audio, laptops, wearables and home cinema built for teenagers and families.",
     type: "website",
@@ -44,15 +44,13 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           href="https://images.pexels.com"
           crossOrigin="anonymous"
         />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..600&family=Inter:wght@300..700&display=swap"
-          rel="stylesheet"
-        />
+
       </head>
       <body className="min-h-screen bg-cream-50 text-ink-900 antialiased">
         <CartProvider>
+          <a href="#main-content" className="skip-link">Skip to content</a>
           <SiteHeader />
-          <main>{children}</main>
+          <main id="main-content">{children}</main>
           <SiteFooter />
           <CartDrawer />
         </CartProvider>
