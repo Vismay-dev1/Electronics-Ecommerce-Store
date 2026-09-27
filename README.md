@@ -1,187 +1,69 @@
 # Loyal Electronics
 
-A production-ready storefront for **Loyal Electronics** — premium audio, laptops, wearables, creator gear, gaming, and home cinema built for youth and families.
+A professionally styled electronics **demo storefront** built with Next.js 16, React 19, Tailwind CSS 4 and optional PostgreSQL/Drizzle persistence.
 
-The shop ships with a cinematic home page, a filterable product grid, rich product pages, a persistent slide-out bag, and a three-step checkout that writes real orders to PostgreSQL. Catalog data is seeded automatically the first time the app talks to the database, so the store feels open for business on a fresh install.
-
-> Demo checkout only. Card details are validated in the browser and never charged or stored.
-
-## Features
-
-- **Home** — editorial hero, featured collections, editor’s picks, weekly deals, new arrivals, and verified customer quotes
-- **Shop** — category, audience, price, rating, and sale filters; sort; search; pagination; shareable URLs
-- **Product pages** — image gallery, colour and quantity, quick add and buy-now, specs, related products
-- **Reviews** — rating breakdown plus a live review form that updates the product average
-- **Slide-out cart** — quantity edits, free-shipping progress, persisted in `localStorage`
-- **Checkout** — contact, delivery, payment; promo codes; gift note; order confirmation page
-- **Responsive** — mobile nav, mobile filters, and a cart that works from phone to desktop
-
-## Tech stack
-
-| Layer | Choice |
-| --- | --- |
-| Framework | Next.js 16 (App Router) + React 19 |
-| Styling | Tailwind CSS 4 |
-| Database | PostgreSQL + Drizzle ORM |
-| Images | `next/image`, Pexels product photography, local hero assets |
-
-## Getting started
-
-### Prerequisites
-
-- Node.js 20+
-- PostgreSQL 15+
-
-### 1. Install
+## Quick start: no database needed
 
 ```bash
-npm install
+npm ci
+npm run dev -- --hostname 0.0.0.0
 ```
 
-### 2. Configure the database
+Open http://localhost:3000. Without `DATABASE_URL`, the store uses a read-only catalog derived from the seed products. Search, categories, sorting, product details, persistent bag, saved product state, and checkout UI work. Order and review POST requests explicitly return HTTP 503 with a preview-mode explanation; they do not pretend to save anything.
 
-Copy the example env file and point it at your database:
+## Enable database-backed demo orders and reviews
 
 ```bash
 cp .env.example .env
 ```
 
-```env
-DATABASE_URL=postgresql://postgres:postgres@127.0.0.1:5432/app_db
-```
-
-Create the database if it does not exist:
-
-```bash
-createdb app_db
-```
-
-### 3. Push the schema
+Uncomment and configure `DATABASE_URL`, create that PostgreSQL database, then:
 
 ```bash
 npx drizzle-kit push
+npm run dev -- --hostname 0.0.0.0
 ```
 
-Tables are defined in `src/db/schema.ts`. No migration files are required for local setup.
+The catalog is automatically seeded when its tables exist. A configured but unavailable database is treated as an error, not silently replaced with demo data. The page error boundary provides a retry and setup guidance.
 
-### 4. Run
+Set `NEXT_PUBLIC_SITE_URL` to your deployment origin for sitemap/robots URLs. The local default is `http://localhost:3000`.
+
+## Experience
+
+- Cohesive Loyal identity: signal orange, warm neutrals, clean typography, responsive layouts.
+- Homepage with category navigation, bestsellers, editorial promotion and new arrivals.
+- URL-driven filters, search, sorting and pagination at `/shop`.
+- Product details, color choice, stock-aware purchase controls and locally saved favorites.
+- Persistent cart with quantity controls, keyboard focus containment and Escape dismissal.
+- Demo checkout with server-side repricing, strict item/color/quantity/shipping validation and transactional order/item inserts.
+- `/about` and `/help` contain real destinations for story, shipping, returns, checkout and privacy information.
+- Local WebP images eliminate dependence on remote image hosts.
+
+### Images and sample content
+
+Images in `public/images/` are AI-generated concept-product illustrations, not photographs of real inventory. Related demo models reuse representative images; they are not exact variant/angle representations. Product descriptions and seeded reviews are fictional sample content. Replace these with verified inventory and customer content before launch. Inter is loaded from Google Fonts with system-font fallbacks.
+
+### Promo codes
+
+`LOYAL10` (10%), `FAMILY15` (15%), `STUDENT20` (20%). Standard shipping is $6.95 or free at a discounted subtotal of $75+. Express is $14.95; same-day is $24.95. Tax is an illustrative 8.25%.
+
+## Checks
 
 ```bash
-npm run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000).
-
-The catalog seeds itself on the first page or API request (`src/db/seed.ts`). You do not need a separate seed command. Seeding is skipped if products already exist.
-
-### Production
-
-```bash
+npm run lint
+npm run typecheck
 npm run build
-npm run start
+npm run test:smoke   # requires the app running on port 3000
 ```
 
-## Demo promo codes
+Set `TEST_ORIGIN` to test a different server. Smoke tests cover homepage, category filtering, empty search, product and not-found pages, checkout, information pages, health, local assets and disabled preview submissions.
 
-Apply these at checkout:
+Desktop (1440px) and mobile (390px) Chromium checks also exercised image loading, cart persistence, category navigation, buy-now routing and overflow, with no browser JavaScript errors. These browser checks were run manually using an ephemeral Playwright setup; the checked-in smoke test needs only Node.js.
 
-| Code | Discount |
-| --- | --- |
-| `LOYAL10` | 10% off |
-| `FAMILY15` | 15% off |
-| `STUDENT20` | 20% off |
+## Production boundaries
 
-Shipping is free over **$75** on the standard method. Tax is estimated at 8.25%.
+This is **not a live commerce backend**. Payment inputs are demonstration-only; never enter real card data. No processor, receipt email, fulfillment, returns service or actual warranty is connected. Database-backed checkout was compile-checked but not integration-tested against PostgreSQL in this environment.
 
-## Routes
+Before taking real orders, add authenticated/private order access, a payment provider, idempotency, inventory reservation, rate limiting, review moderation, real tax/shipping logic, transactional email, operational monitoring and legal policies. New order references use cryptographically random UUIDs, but an unguessable link is not a substitute for access control. Do not use real personal information in this demo.
 
-| Path | What it does |
-| --- | --- |
-| `/` | Home |
-| `/shop` | Product grid. Query: `category`, `audience`, `max`, `rating`, `deals`, `q`, `sort`, `page` |
-| `/product/[slug]` | Product detail, gallery, reviews |
-| `/checkout` | Three-step checkout |
-| `/orders/[orderNumber]` | Confirmation |
-| `/api/orders` | `POST` place an order |
-| `/api/reviews` | `POST` publish a review |
-| `/api/health` | Database health check |
-| `/sitemap.xml` | Generated sitemap |
-| `/robots.txt` | Crawl rules |
-
-Shop filters are URL-driven, so a filtered view can be bookmarked or shared. Example:
-
-```text
-/shop?category=audio,wearables&audience=youth&max=250&rating=4&sort=price-asc
-```
-
-Sort values: `featured`, `newest`, `price-asc`, `price-desc`, `rating`, `reviews`.
-
-Categories: `audio`, `vision`, `compute`, `wearables`, `create`, `play`.
-
-Audiences: `youth`, `family`, `everyone`.
-
-## Project structure
-
-```text
-src/
-  app/
-    page.tsx                  Home
-    shop/                     Catalog + filters
-    product/[slug]/           Product detail
-    checkout/                 Checkout
-    orders/[orderNumber]/     Confirmation
-    api/orders/               Order creation
-    api/reviews/              Review creation
-    api/health/               Health check
-  components/
-    cart-provider.tsx         Persistent cart state
-    cart-drawer.tsx           Slide-out bag
-    product/                  Gallery, buy box, reviews
-    checkout/                 Checkout flow
-    shop/                     Filters and sort
-  db/
-    schema.ts                 Drizzle tables
-    seed.ts                   Idempotent seeder
-    seed-data.ts              Products, collections, reviews
-  lib/
-    queries.ts                Catalog and order queries
-    promo.ts                  Promo codes
-    types.ts                  Shared types and price formatting
-public/images/                Hero and lifestyle photography
-```
-
-## Data model
-
-- `products` — catalog, pricing in cents, JSON specs, highlights, and colours
-- `product_images` — ordered gallery
-- `reviews` — verified and customer-written reviews; product rating is recalculated on insert
-- `collections` — featured collections on the home page
-- `orders` / `order_items` — checkout records, including promo and shipping totals
-
-Prices are stored as integer cents and formatted in USD.
-
-## Cart
-
-The bag lives in the browser under `loyal-electronics-cart-v1`. Adding a product opens the drawer. Checkout re-prices every line from the database, so a stale local price cannot be submitted.
-
-## Scripts
-
-```bash
-npm run dev         # next dev
-npm run build       # production build
-npm run start       # next start
-npm run lint        # eslint
-npm run typecheck   # tsc --noEmit
-npx drizzle-kit push
-```
-
-## Notes
-
-- Product photography is loaded from Pexels. `next.config.ts` allows `images.pexels.com`.
-- Hero images live in `public/images/`.
-- Checkout is a demonstration flow. Do not connect a live processor without replacing the payment step.
-- Update the placeholder origin in `src/app/sitemap.ts` and `src/app/robots.ts` before deploying.
-
-## License
-
-Private demo storefront. Add a license before publishing if you intend others to reuse the code.
+The production dependency audit is clean. Four moderate development-only advisories remain in the existing Drizzle Kit / legacy esbuild dependency chain; avoid exposing that tool's development server and evaluate an upstream-supported tooling update rather than applying npm's suggested major downgrade blindly.

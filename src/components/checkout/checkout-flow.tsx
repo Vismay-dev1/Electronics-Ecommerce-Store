@@ -674,8 +674,7 @@ export function CheckoutFlow() {
 
             <p className="mt-5 flex items-start gap-2 text-[11px] leading-relaxed text-ink-500">
               <ShieldIcon className="mt-0.5 h-4 w-4 shrink-0 text-brand-500" />
-              Your card is never charged in this demo. Data you enter stays in
-              your own database.
+              Demo only — do not enter real card details. Contact and delivery details are saved to the store database when connected. Card details are not saved or charged.
             </p>
           </div>
         </aside>

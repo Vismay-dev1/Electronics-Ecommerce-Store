@@ -9,25 +9,18 @@ import {
   CloseIcon,
   MenuIcon,
   SearchIcon,
-  SparkIcon,
 } from "./icons";
 
 const NAV_LINKS = [
   { href: "/shop", label: "All products" },
   { href: "/shop?category=audio", label: "Audio" },
-  { href: "/shop?category=compute", label: "Study & Create" },
-  { href: "/shop?category=vision", label: "Movie Night" },
+  { href: "/shop?category=compute", label: "Computing" },
+  { href: "/shop?category=vision", label: "TV & Home" },
   { href: "/shop?category=play", label: "Gaming" },
   { href: "/shop?deals=true", label: "Deals" },
 ];
 
-const TICKER = [
-  "Free 2-day shipping over $75",
-  "3-year Loyal Care on every device",
-  "30-day no-questions returns",
-  "Student & family bundles save up to 18%",
-  "Trade in last year's tech, get credit",
-];
+
 
 export function SiteHeader() {
   const { count, openCart, hydrated } = useCart();
@@ -59,6 +52,12 @@ export function SiteHeader() {
     };
   }, [menuOpen]);
 
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") { setMenuOpen(false); setSearchOpen(false); } };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
   const submitSearch = (event: React.FormEvent) => {
     event.preventDefault();
     const trimmed = query.trim();
@@ -70,19 +69,7 @@ export function SiteHeader() {
 
   return (
     <>
-      <div className="relative overflow-hidden border-b border-ink-900/10 bg-ink-950 text-cream-100">
-        <div className="flex w-max animate-[marquee_38s_linear_infinite] items-center gap-10 py-2.5 pr-10">
-          {[...TICKER, ...TICKER].map((item, index) => (
-            <span
-              key={`${item}-${index}`}
-              className="flex items-center gap-2 whitespace-nowrap text-[11px] font-medium uppercase tracking-[0.18em] text-cream-100/70"
-            >
-              <SparkIcon className="h-3 w-3 text-brand-300" />
-              {item}
-            </span>
-          ))}
-        </div>
-      </div>
+      <div className="announcement"><span>GOOD TECH. BETTER VALUE.</span><p>Meet your everyday upgrade. <Link href="/shop?deals=true">Explore the latest deals <span aria-hidden="true">↗</span></Link></p><span>Free shipping on orders $75+</span></div>
 
       <header
         className={`sticky top-0 z-40 transition-all duration-500 ${
@@ -97,25 +84,24 @@ export function SiteHeader() {
               type="button"
               className="-ml-1.5 rounded-full p-2 text-ink-800 transition-colors hover:bg-ink-900/5 lg:hidden"
               onClick={() => setMenuOpen(true)}
-              aria-label="Open menu"
+              aria-label="Open menu" aria-expanded={menuOpen}
             >
               <MenuIcon className="h-5 w-5" />
             </button>
             <Link href="/" className="group flex items-baseline gap-2">
-              <span className="font-display text-2xl leading-none tracking-tight text-ink-900 md:text-[26px]">
-                Loyal
-              </span>
+              <span className="brand-wordmark"><span className="brand-icon">l.</span> loyal<span className="brand-dot">®</span></span>
               <span className="hidden text-[10px] font-semibold uppercase tracking-[0.32em] text-ink-400 transition-colors group-hover:text-brand-500 sm:block">
-                Electronics
+                ELECTRONICS
               </span>
             </Link>
           </div>
 
           <nav className="hidden items-center gap-7 lg:flex">
-            {NAV_LINKS.slice(1).map((link) => (
+            {NAV_LINKS.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
+                onClick={() => setMenuOpen(false)}
                 className="link-underline text-sm font-medium text-ink-700 transition-colors hover:text-ink-950"
               >
                 {link.label}
@@ -128,7 +114,7 @@ export function SiteHeader() {
               type="button"
               onClick={() => setSearchOpen((open) => !open)}
               className="rounded-full p-2.5 text-ink-800 transition-colors hover:bg-ink-900/5"
-              aria-label="Search products"
+              aria-label="Search products" aria-expanded={searchOpen}
             >
               {searchOpen ? (
                 <CloseIcon className="h-5 w-5" />
@@ -158,6 +144,7 @@ export function SiteHeader() {
         </div>
 
         <div
+          inert={!searchOpen}
           className={`overflow-hidden border-t border-ink-900/10 bg-cream-50 transition-[max-height,opacity] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
             searchOpen ? "max-h-24 opacity-100" : "max-h-0 opacity-0"
           }`}
@@ -168,6 +155,7 @@ export function SiteHeader() {
           >
             <SearchIcon className="h-5 w-5 text-ink-400" />
             <input
+              aria-label="Search products"
               autoFocus={searchOpen}
               value={query}
               onChange={(event) => setQuery(event.target.value)}
@@ -190,6 +178,7 @@ export function SiteHeader() {
           menuOpen ? "pointer-events-auto" : "pointer-events-none"
         }`}
         aria-hidden={!menuOpen}
+        inert={!menuOpen}
       >
         <div
           className={`absolute inset-0 bg-ink-950/50 backdrop-blur-sm transition-opacity duration-400 ${
@@ -218,6 +207,7 @@ export function SiteHeader() {
               <Link
                 key={link.href}
                 href={link.href}
+                onClick={() => setMenuOpen(false)}
                 className="rounded-xl px-4 py-3.5 font-display text-xl text-ink-900 transition-colors hover:bg-cream-100"
               >
                 {link.label}
@@ -225,7 +215,7 @@ export function SiteHeader() {
             ))}
           </nav>
           <div className="border-t border-ink-900/10 px-6 py-5 text-xs leading-relaxed text-ink-500">
-            Free 2-day shipping over $75 · 3-year Loyal Care on every device.
+            Free standard shipping on orders $75 and up. Explore the demo catalog.
           </div>
         </div>
       </div>

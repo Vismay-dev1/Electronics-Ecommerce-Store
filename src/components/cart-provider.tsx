@@ -49,9 +49,9 @@ function readStoredCart(): CartLine[] {
     return parsed
       .filter(
         (line) =>
-          typeof line?.productId === "number" &&
-          typeof line?.unitPriceCents === "number" &&
-          typeof line?.quantity === "number" &&
+          Number.isSafeInteger(line?.productId) && line.productId > 0 &&
+          Number.isSafeInteger(line?.unitPriceCents) && line.unitPriceCents >= 0 &&
+          Number.isSafeInteger(line?.quantity) &&
           line.quantity > 0,
       )
       .map((line) => ({
@@ -61,7 +61,7 @@ function readStoredCart(): CartLine[] {
         imageUrl: String(line.imageUrl ?? ""),
         unitPriceCents: line.unitPriceCents,
         quantity: Math.min(20, Math.round(line.quantity)),
-        color: line.color ?? null,
+        color: typeof line.color === "string" ? line.color : null,
       }));
   } catch {
     return [];
@@ -117,6 +117,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const addItem = useCallback(
     (payload: AddPayload, quantity = 1) => {
+      if (!Number.isSafeInteger(quantity) || quantity < 1) return;
       const color = payload.color ?? null;
       setLines((current) => {
         const index = current.findIndex((line) =>
@@ -151,6 +152,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const setQuantity = useCallback(
     (productId: number, color: string | null, quantity: number) => {
+      if (!Number.isSafeInteger(quantity)) return;
       setLines((current) => {
         if (quantity <= 0) {
           return current.filter((line) => !sameLine(line, productId, color));

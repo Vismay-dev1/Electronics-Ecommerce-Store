@@ -23,7 +23,7 @@ type PageProps = { params: Promise<{ orderNumber: string }> };
 
 export default async function OrderPage({ params }: PageProps) {
   const { orderNumber } = await params;
-  const result = await getOrderByNumber(decodeURIComponent(orderNumber));
+  const result = await getOrderByNumber(orderNumber);
   if (!result) notFound();
 
   const { order, items } = result;
@@ -49,14 +49,14 @@ export default async function OrderPage({ params }: PageProps) {
         </span>
         <p className="eyebrow mt-7 text-brand-500">Order {order.status}</p>
         <h1 className="mt-4 font-display text-4xl leading-[1.02] text-ink-900 md:text-5xl">
-          Thank you, {order.fullName.split(" ")[0]} — we&apos;re packing it now
+          Thank you, {order.fullName.split(" ")[0]} — your demo order is saved
         </h1>
         <p className="mx-auto mt-5 max-w-md text-sm leading-relaxed text-ink-600">
-          A receipt is on its way to{" "}
+          This demo order was saved for{" "}
           <strong className="font-semibold text-ink-900">{order.email}</strong>.
-          Keep your order number handy for support.
+          No email is sent, payment taken, or shipment created.
         </p>
-        <p className="mt-6 inline-flex items-center gap-2 rounded-full bg-ink-900 px-5 py-2.5 font-mono text-sm tracking-[0.12em] text-cream-50">
+        <p className="mt-6 inline-flex items-center gap-2 rounded-full bg-ink-900 px-5 py-2.5 font-mono text-sm break-all text-cream-50">
           {order.orderNumber}
         </p>
       </div>
@@ -65,7 +65,7 @@ export default async function OrderPage({ params }: PageProps) {
         {[
           {
             icon: TruckIcon,
-            title: "Estimated delivery",
+            title: "Illustrative delivery date",
             body: eta.toLocaleDateString("en-US", {
               weekday: "long",
               month: "long",
@@ -75,15 +75,15 @@ export default async function OrderPage({ params }: PageProps) {
           },
           {
             icon: ShieldIcon,
-            title: "Loyal Care",
-            body: "3-year warranty",
-            note: "Accidental damage included",
+            title: "Payment",
+            body: "No charge taken",
+            note: "Demonstration only",
           },
           {
             icon: RefreshIcon,
-            title: "Returns",
-            body: "30 days free",
-            note: "We pay the postage",
+            title: "Fulfillment",
+            body: "No shipment created",
+            note: "Explore more at /help",
           },
         ].map((card, index) => (
           <div
@@ -104,7 +104,7 @@ export default async function OrderPage({ params }: PageProps) {
       <div className="mt-12 grid gap-8 lg:grid-cols-[1.3fr_1fr]">
         <section className="rounded-3xl border border-ink-900/10 p-6 md:p-8">
           <h2 className="font-display text-2xl text-ink-900">
-            {items.length} item{items.length === 1 ? "" : "s"} on the way
+            {items.length} item{items.length === 1 ? "" : "s"} in your demo order
           </h2>
           <ul className="mt-6 flex flex-col divide-y divide-ink-900/10">
             {items.map((item) => (

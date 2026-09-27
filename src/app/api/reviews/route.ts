@@ -11,6 +11,7 @@ function clean(value: unknown, max: number): string {
 }
 
 export async function POST(request: Request) {
+  if (!process.env.DATABASE_URL) return Response.json({ error: "This is a preview store. Ordering and review submissions are unavailable until a database is connected." }, { status: 503 });
   try {
     await ensureSeeded();
     const payload = (await request.json()) as Record<string, unknown>;

@@ -1,19 +1,56 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useCart } from "@/components/cart-provider";
-import { CheckIcon, HeartIcon, MinusIcon, PlusIcon, TruckIcon } from "@/components/icons";
+import {
+  CheckIcon,
+  HeartIcon,
+  MinusIcon,
+  PlusIcon,
+  TruckIcon,
+} from "@/components/icons";
 import type { ProductCard } from "@/lib/types";
 import { formatPrice } from "@/lib/types";
 
 export function BuyBox({ product }: { product: ProductCard }) {
-  const { addItem } = useCart();
+  const { addItem, closeCart } = useCart();
   const router = useRouter();
   const [color, setColor] = useState<string | null>(product.colors[0] ?? null);
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
   const [wish, setWish] = useState(false);
+
+  useEffect(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem("loyal-wishlist") || "[]");
+      queueMicrotask(() =>
+        setWish(Array.isArray(saved) && saved.includes(product.slug)),
+      );
+    } catch {
+      /* optional storage */
+    }
+  }, [product.slug]);
+  const toggleWish = () => {
+    const next = !wish;
+    setWish(next);
+    try {
+      const stored = JSON.parse(localStorage.getItem("loyal-wishlist") || "[]");
+      const saved: string[] = Array.isArray(stored)
+        ? stored.filter((s: unknown) => typeof s === "string")
+        : [];
+      localStorage.setItem(
+        "loyal-wishlist",
+        JSON.stringify(
+          next
+            ? [...new Set([...saved, product.slug])]
+            : saved.filter((s) => s !== product.slug),
+        ),
+      );
+    } catch {
+      /* optional storage */
+    }
+  };
 
   const discount =
     product.compareAtCents && product.compareAtCents > product.priceCents
@@ -34,13 +71,16 @@ export function BuyBox({ product }: { product: ProductCard }) {
   };
 
   const handleAdd = () => {
+    if (product.stock < 1) return;
     addItem(payload, quantity);
     setAdded(true);
     setTimeout(() => setAdded(false), 1800);
   };
 
   const handleBuyNow = () => {
+    if (product.stock < 1) return;
     addItem(payload, quantity);
+    closeCart();
     router.push("/checkout");
   };
 
@@ -62,7 +102,7 @@ export function BuyBox({ product }: { product: ProductCard }) {
         )}
       </div>
       <p className="mt-2 text-xs text-ink-500">
-        or 4 interest-free payments of {formatPrice(Math.round(product.priceCents / 4))}
+        Prices in USD. Taxes and shipping calculated at checkout.
       </p>
 
       {product.colors.length > 0 && (
@@ -76,6 +116,7 @@ export function BuyBox({ product }: { product: ProductCard }) {
                 key={option}
                 type="button"
                 onClick={() => setColor(option)}
+                aria-pressed={color === option}
                 className={`rounded-full border px-4 py-2 text-xs font-medium transition-all duration-300 ${
                   color === option
                     ? "border-ink-900 bg-ink-900 text-cream-50"
@@ -104,7 +145,9 @@ export function BuyBox({ product }: { product: ProductCard }) {
           </span>
           <button
             type="button"
-            onClick={() => setQuantity((value) => Math.min(10, value + 1))}
+            onClick={() =>
+              setQuantity((value) => Math.min(20, product.stock, value + 1))
+            }
             className="p-3 text-ink-700 transition-colors hover:text-brand-500"
             aria-label="Increase quantity"
           >
@@ -113,10 +156,10 @@ export function BuyBox({ product }: { product: ProductCard }) {
         </div>
         <p className="text-xs text-ink-500">
           {product.stock > 12
-            ? "In stock · ships today"
+            ? "Available in the demo catalog"
             : product.stock > 0
               ? `Only ${product.stock} left in stock`
-              : "Backordered · ships in 2 weeks"}
+              : "Out of stock"}
         </p>
       </div>
 
@@ -124,6 +167,7 @@ export function BuyBox({ product }: { product: ProductCard }) {
         <button
           type="button"
           onClick={handleAdd}
+          disabled={product.stock < 1}
           className={`flex w-full items-center justify-center gap-2 rounded-full px-6 py-4 text-xs font-semibold uppercase tracking-[0.16em] transition-all duration-300 ${
             added
               ? "bg-emerald-600 text-white"
@@ -141,13 +185,15 @@ export function BuyBox({ product }: { product: ProductCard }) {
         <button
           type="button"
           onClick={handleBuyNow}
+          disabled={product.stock < 1}
           className="w-full rounded-full border border-ink-900 px-6 py-4 text-xs font-semibold uppercase tracking-[0.16em] text-ink-900 transition-all duration-300 hover:bg-ink-900 hover:text-cream-50"
         >
           Buy it now
         </button>
         <button
           type="button"
-          onClick={() => setWish((value) => !value)}
+          onClick={toggleWish}
+          aria-pressed={wish}
           className="mx-auto mt-1 inline-flex items-center gap-1.5 text-xs font-medium text-ink-500 transition-colors hover:text-ink-900"
         >
           <HeartIcon
@@ -163,10 +209,10 @@ export function BuyBox({ product }: { product: ProductCard }) {
         <TruckIcon className="mt-0.5 h-5 w-5 shrink-0 text-brand-500" />
         <p className="text-xs leading-relaxed text-ink-600">
           <strong className="font-semibold text-ink-900">
-            Free 2-day shipping
+            Free standard shipping
           </strong>{" "}
-          on this order over $75. Ordered before 1pm ships the same day from our
-          Columbus warehouse.
+          on discounted subtotals of $75 and up. Standard delivery is estimated
+          at 3–5 business days in this demo.
         </p>
       </div>
     </div>

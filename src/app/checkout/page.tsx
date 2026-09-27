@@ -11,5 +11,5 @@ export const metadata: Metadata = {
 };
 
 export default function CheckoutPage() {
-  return <CheckoutFlow />;
+  return <>{!process.env.DATABASE_URL && <div role="status" className="border-b border-orange-200 bg-orange-50 px-6 py-4 text-center text-sm text-orange-900">Catalog preview: explore your bag and checkout steps. Orders are unavailable until a database is connected. Do not enter real payment details.</div>}<CheckoutFlow /></>;
 }

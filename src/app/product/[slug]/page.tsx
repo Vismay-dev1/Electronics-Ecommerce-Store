@@ -43,8 +43,8 @@ export async function generateMetadata({
 
 const ASSURANCES = [
   { icon: TruckIcon, label: "Free 2-day delivery over $75" },
-  { icon: ShieldIcon, label: "3-year Loyal Care warranty" },
-  { icon: RefreshIcon, label: "30-day free returns" },
+  { icon: ShieldIcon, label: "Thoughtfully selected tech" },
+  { icon: RefreshIcon, label: "Demo store · no fulfillment" },
 ];
 
 export default async function ProductPage({ params }: PageProps) {
