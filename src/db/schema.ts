@@ -102,7 +102,7 @@ export const orders = pgTable("orders", {
   city: text("city").notNull(),
   region: text("region").notNull().default(""),
   postalCode: text("postal_code").notNull(),
-  country: text("country").notNull().default("United States"),
+  country: text("country").notNull().default("India"),
   phone: text("phone").notNull().default(""),
   shippingMethod: text("shipping_method").notNull().default("standard"),
   giftNote: text("gift_note").notNull().default(""),

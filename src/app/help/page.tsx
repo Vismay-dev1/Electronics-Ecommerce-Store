@@ -16,7 +16,7 @@ export default function HelpPage() {
         {
           id: "shipping",
           title: "Shipping",
-          body: "The demo calculates standard shipping at $6.95, or free for discounted subtotals of $75 and up. Standard delivery is shown as 3–5 business days. Express is $14.95 and same-day is $24.95. These are illustrative options, not a delivery promise.",
+          body: "The demo calculates standard shipping at ₹99, or free for discounted subtotals of ₹1,999 and up. Standard delivery is shown as 3–5 business days. Express is ₹199 and same-day is ₹499. These are illustrative options, not a delivery promise.",
         },
         {
           id: "returns",

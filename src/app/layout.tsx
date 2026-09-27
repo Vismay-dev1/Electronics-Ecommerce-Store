@@ -12,7 +12,7 @@ export const metadata: Metadata = {
     template: "%s · Loyal Electronics",
   },
   description:
-    "Premium audio, laptops, wearables and home cinema built for teenagers and families. Free standard shipping on orders $75 and up.",
+    "Premium audio, laptops, wearables and home cinema built for teenagers and families. Free standard shipping on orders ₹1,999 and up.",
   keywords: [
     "electronics store",
     "headphones",

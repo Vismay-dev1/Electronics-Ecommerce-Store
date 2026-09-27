@@ -74,7 +74,7 @@ export async function POST(request: Request) {
     const city = clean(payload.city, 90);
     const region = clean(payload.region, 90);
     const postalCode = clean(payload.postalCode, 24);
-    const country = clean(payload.country, 80) || "United States";
+    const country = clean(payload.country, 80) || "India";
     const phone = clean(payload.phone, 40);
     const giftNote = clean(payload.giftNote, 280);
     const shippingMethod = clean(payload.shippingMethod, 24) || "standard";

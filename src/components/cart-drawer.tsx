@@ -15,7 +15,7 @@ import {
 } from "./icons";
 import { formatPrice } from "@/lib/types";
 
-const FREE_SHIPPING_THRESHOLD = 7500;
+const FREE_SHIPPING_THRESHOLD = 199900;
 
 export function CartDrawer() {
   const {

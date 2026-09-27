@@ -42,7 +42,7 @@ export async function generateMetadata({
 }
 
 const ASSURANCES = [
-  { icon: TruckIcon, label: "Free 2-day delivery over $75" },
+  { icon: TruckIcon, label: "Free 2-day delivery over ₹1,999" },
   { icon: ShieldIcon, label: "Thoughtfully selected tech" },
   { icon: RefreshIcon, label: "Demo store · no fulfillment" },
 ];

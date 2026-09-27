@@ -9,7 +9,7 @@ import {
   useState,
 } from "react";
 import { ChevronDown, CloseIcon, FilterIcon } from "@/components/icons";
-import { SORT_OPTIONS, isSortValue } from "@/lib/types";
+import { SORT_OPTIONS, isSortValue, formatPrice } from "@/lib/types";
 import { StarRating } from "@/components/star-rating";
 
 const FilterUiContext = createContext<{
@@ -237,30 +237,28 @@ export function FilterPanel({
         <div className="flex items-baseline justify-between">
           <h3 className="eyebrow text-ink-400">Max price</h3>
           <span className="text-xs font-semibold text-ink-700">
-            ${(priceCeiling / 100).toLocaleString("en-US", {
-              maximumFractionDigits: 0,
-            })}
+            {formatPrice(priceCeiling)}
           </span>
         </div>
         <input
           type="range"
           min={minPriceCents}
           max={maxPriceCents}
-          step={500}
+          step={50000}
           value={priceCeiling}
           onChange={(event) => {
-            const dollars = Math.round(Number(event.target.value) / 100);
+            const rupees = Math.round(Number(event.target.value) / 100);
             write((params) => {
-              if (dollars * 100 >= maxPriceCents) params.delete("max");
-              else params.set("max", String(dollars));
+              if (rupees * 100 >= maxPriceCents) params.delete("max");
+              else params.set("max", String(rupees));
             });
           }}
           className="mt-4 w-full"
           aria-label="Maximum price"
         />
         <div className="mt-1.5 flex justify-between text-[11px] text-ink-400">
-          <span>${Math.round(minPriceCents / 100)}</span>
-          <span>${Math.round(maxPriceCents / 100)}</span>
+          <span>{formatPrice(minPriceCents)}</span>
+          <span>{formatPrice(maxPriceCents)}</span>
         </div>
       </div>
 
@@ -449,7 +447,7 @@ export function ActiveFilters({
   }
   if (maxParam) {
     chips.push({
-      label: `Under $${Number(maxParam).toLocaleString("en-US")}`,
+      label: `Under ${formatPrice(Number(maxParam) * 100)}`,
       onRemove: () => write((params) => params.delete("max")),
     });
   }

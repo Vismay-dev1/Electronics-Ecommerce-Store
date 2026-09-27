@@ -81,34 +81,34 @@ export const SHIPPING_METHODS = [
   {
     id: "standard",
     label: "Standard",
-    detail: "3–5 business days · free over $75",
-    priceCents: 695,
-    freeOverCents: 7500,
+    detail: "3–5 business days · free over ₹1,999",
+    priceCents: 9900,
+    freeOverCents: 199900,
   },
   {
     id: "express",
     label: "Express",
     detail: "2 business days, tracked",
-    priceCents: 1495,
+    priceCents: 19900,
     freeOverCents: null,
   },
   {
     id: "sameday",
     label: "Same-day city",
     detail: "Ordered before 1pm, metro areas",
-    priceCents: 2495,
+    priceCents: 49900,
     freeOverCents: null,
   },
 ] as const;
 
 export type ShippingMethodId = (typeof SHIPPING_METHODS)[number]["id"];
 
-export const TAX_RATE = 0.0825;
+export const TAX_RATE = 0.18;
 
 export function formatPrice(cents: number): string {
-  return new Intl.NumberFormat("en-US", {
+  return new Intl.NumberFormat("en-IN", {
     style: "currency",
-    currency: "USD",
-    minimumFractionDigits: 2,
-  }).format(cents / 100);
+    currency: "INR",
+    maximumFractionDigits: 0,
+  }).format(Math.round(cents / 100));
 }

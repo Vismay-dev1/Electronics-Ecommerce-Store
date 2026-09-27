@@ -45,7 +45,7 @@ export default async function ShopPage({
 
   const categories = toArray(params.category).filter(Boolean);
   const audiences = toArray(params.audience).filter(Boolean);
-  const maxDollars = Number(first(params.max));
+  const maxPrice = Number(first(params.max));
   const rating = Number(first(params.rating));
   const sort = first(params.sort) ?? "featured";
   const query = first(params.q)?.trim();
@@ -57,8 +57,8 @@ export default async function ShopPage({
     getShopProducts({
       categories,
       audiences,
-      maxPriceCents: Number.isFinite(maxDollars) && maxDollars > 0
-        ? Math.round(maxDollars * 100)
+      maxPriceCents: Number.isFinite(maxPrice) && maxPrice > 0
+        ? Math.round(maxPrice * 100)
         : undefined,
       minRating: Number.isFinite(rating) && rating > 0 ? rating : undefined,
       query: query || undefined,
@@ -112,7 +112,7 @@ export default async function ShopPage({
           <div className="mt-6 flex flex-wrap items-end justify-between gap-6">
             <div>
               <p className="eyebrow text-brand-500">
-                {facets.total} products · free shipping over $75
+                {facets.total} products · free shipping over ₹1,999
               </p>
               <h1 className="mt-3 font-display text-4xl leading-[1] text-ink-900 md:text-5xl">
                 {heading}

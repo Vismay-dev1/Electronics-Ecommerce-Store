@@ -275,7 +275,7 @@ export function CheckoutFlow() {
                     <input
                       name="address1"
                       autoComplete="address-line1"
-                      placeholder="1420 Maple Street"
+                      placeholder="1420 MG Road"
                       className={FIELD}
                       required
                     />
@@ -285,7 +285,7 @@ export function CheckoutFlow() {
                     <input
                       name="address2"
                       autoComplete="address-line2"
-                      placeholder="Apt 3B"
+                      placeholder="Flat 4B, Sky Heights"
                       className={FIELD}
                     />
                   </label>
@@ -294,7 +294,7 @@ export function CheckoutFlow() {
                     <input
                       name="city"
                       autoComplete="address-level2"
-                      placeholder="Columbus"
+                      placeholder="Mumbai"
                       className={FIELD}
                       required
                     />
@@ -304,7 +304,7 @@ export function CheckoutFlow() {
                     <input
                       name="region"
                       autoComplete="address-level1"
-                      placeholder="Ohio"
+                      placeholder="Maharashtra"
                       className={FIELD}
                     />
                   </label>
@@ -313,7 +313,7 @@ export function CheckoutFlow() {
                     <input
                       name="postalCode"
                       autoComplete="postal-code"
-                      placeholder="43215"
+                      placeholder="400001"
                       className={FIELD}
                       required
                     />
@@ -322,10 +322,10 @@ export function CheckoutFlow() {
                     <span className={LABEL}>Country</span>
                     <select
                       name="country"
-                      defaultValue="United States"
+                      defaultValue="India"
                       className={FIELD}
                     >
-                      {["United States", "Canada", "United Kingdom", "Ireland"].map(
+                      {["India", "United States", "United Kingdom", "Canada", "Singapore", "UAE", "Australia", "Ireland"].map(
                         (country) => (
                           <option key={country}>{country}</option>
                         ),
@@ -337,7 +337,7 @@ export function CheckoutFlow() {
                     <input
                       name="phone"
                       autoComplete="tel"
-                      placeholder="+1 614 555 0142"
+                      placeholder="+91 98765 43210"
                       className={FIELD}
                     />
                   </label>
