@@ -46,8 +46,10 @@ export function SiteHeader() {
   }, []);
 
   useEffect(() => {
-    setMenuOpen(false);
-    setSearchOpen(false);
+    queueMicrotask(() => {
+      setMenuOpen(false);
+      setSearchOpen(false);
+    });
   }, [pathname]);
 
   useEffect(() => {
