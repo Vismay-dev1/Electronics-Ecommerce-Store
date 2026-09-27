@@ -102,7 +102,7 @@ export function BuyBox({ product }: { product: ProductCard }) {
         )}
       </div>
       <p className="mt-2 text-xs text-ink-500">
-        Prices in USD. Taxes and shipping calculated at checkout.
+        Prices in INR. Taxes and shipping calculated at checkout.
       </p>
 
       {product.colors.length > 0 && (
@@ -211,7 +211,7 @@ export function BuyBox({ product }: { product: ProductCard }) {
           <strong className="font-semibold text-ink-900">
             Free standard shipping
           </strong>{" "}
-          on discounted subtotals of $75 and up. Standard delivery is estimated
+          on discounted subtotals of ₹1,999 and up. Standard delivery is estimated
           at 3–5 business days in this demo.
         </p>
       </div>

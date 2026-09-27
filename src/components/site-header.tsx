@@ -69,7 +69,7 @@ export function SiteHeader() {
 
   return (
     <>
-      <div className="announcement"><span>GOOD TECH. BETTER VALUE.</span><p>Meet your everyday upgrade. <Link href="/shop?deals=true">Explore the latest deals <span aria-hidden="true">↗</span></Link></p><span>Free shipping on orders $75+</span></div>
+      <div className="announcement"><span>GOOD TECH. BETTER VALUE.</span><p>Meet your everyday upgrade. <Link href="/shop?deals=true">Explore the latest deals <span aria-hidden="true">↗</span></Link></p><span>Free shipping on orders ₹1,999+</span></div>
 
       <header
         className={`sticky top-0 z-40 transition-all duration-500 ${
@@ -215,7 +215,7 @@ export function SiteHeader() {
             ))}
           </nav>
           <div className="border-t border-ink-900/10 px-6 py-5 text-xs leading-relaxed text-ink-500">
-            Free standard shipping on orders $75 and up. Explore the demo catalog.
+            Free standard shipping on orders ₹1,999 and up. Explore the demo catalog.
           </div>
         </div>
       </div>

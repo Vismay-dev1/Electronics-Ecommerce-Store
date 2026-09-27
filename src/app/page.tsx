@@ -84,7 +84,7 @@ export default async function HomePage() {
           {
             icon: TruckIcon,
             title: "Free shipping",
-            copy: "On orders $75 and up",
+            copy: "On orders ₹1,999 and up",
           },
           {
             icon: RefreshIcon,
