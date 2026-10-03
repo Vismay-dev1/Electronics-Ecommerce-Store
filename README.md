@@ -1,5 +1,5 @@
 
-ecommerce-liard-tau-19.vercel.app
+https://ecommerce-liard-tau-19.vercel.app/
 
 
 # Loyal Electronics
