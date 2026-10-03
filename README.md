@@ -1,3 +1,7 @@
+
+ecommerce-liard-tau-19.vercel.app
+
+
 # Loyal Electronics
 
 A professionally styled electronics **demo storefront** built with Next.js 16, React 19, Tailwind CSS 4 and optional PostgreSQL/Drizzle persistence.
