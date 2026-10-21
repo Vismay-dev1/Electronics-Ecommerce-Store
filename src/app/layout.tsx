@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
+import { Analytics } from "@vercel/analytics/next";
 import { CartProvider } from "@/components/cart-provider";
 import { CartDrawer } from "@/components/cart-drawer";
 import { SiteFooter } from "@/components/site-footer";
@@ -54,6 +55,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           <SiteFooter />
           <CartDrawer />
         </CartProvider>
+        <Analytics />
       </body>
     </html>
   );
